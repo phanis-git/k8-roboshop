@@ -42,3 +42,24 @@ spec:
             port: 27017
           initialDelaySeconds: 5
           periodSeconds: 5
+
+--- 
+# As catalogue need to connect to mondodb we know types of services
+# we are choosing ClusterIp service because we are not exposing to public 
+
+apiVersion: v1
+kind: Service 
+metadata:
+  name: mongodb 
+  namespace: roboshop
+spec:
+  selector:
+    project: roboshop
+    environment: dev
+    component: mongodb
+    purpose: mongodb-deployment
+    tier: db
+  ports:
+  - protocol: TCP 
+    port: 27017
+    targetPort: 27017
