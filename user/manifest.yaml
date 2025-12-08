@@ -39,7 +39,7 @@ spec:
     spec:
       containers:
       - name: user 
-         : sivaphanikumar/user:v1
+        image: sivaphanikumar/user:v1
         imagePullPolicy: Always
         envFrom:
         - configMapRef:

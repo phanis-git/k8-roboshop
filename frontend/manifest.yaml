@@ -98,7 +98,7 @@ spec:
     spec:
       containers:
       - name: frontend 
-        image : sivaphanikumar/frontend:v1
+        image: sivaphanikumar/frontend:v1
         imagePullPolicy: Always
         volumeMounts:
         - name: nginx-config-volume

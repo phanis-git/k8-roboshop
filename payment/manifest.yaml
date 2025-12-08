@@ -43,7 +43,7 @@ spec:
     spec:
       containers:
       - name: payment 
-         : sivaphanikumar/payment:v1
+        image: sivaphanikumar/payment:v1
         imagePullPolicy: Always
         envFrom:
         - configMapRef:
