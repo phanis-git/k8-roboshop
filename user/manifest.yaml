@@ -1,0 +1,85 @@
+apiVersion: v1
+kind: ConfigMap
+metadata: 
+  name: user
+  namespace: roboshop
+data:
+  MONGO: true
+  MONGO_URL: "mongodb://mongodb:27017/users"
+  REDIS_URL: "redis://redis:6379"
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: user
+  namespace: roboshop
+  labels:
+    project: roboshop
+    environment: dev
+    component: user
+    purpose: user-deployment
+    tier: backend
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      project: roboshop
+      environment: dev
+      component: user
+      purpose: user-deployment
+      tier: backend
+  template:
+    metadata:
+      labels:
+        project: roboshop
+        environment: dev
+        component: user
+        purpose: user-deployment
+        tier: backend
+    spec:
+      containers:
+      - name: user 
+         : sivaphanikumar/user:v1
+        imagePullPolicy: Always
+        envFrom:
+        - configMapRef:
+            name: user 
+        ports:
+        - containerPort: 8080
+        readinessProbe:
+          # tcpSocket:
+          #   port: 8080
+          # initialDelaySeconds: 10
+          # periodSeconds: 10
+          httpGet:
+            path: /health
+            port: 8080
+          failureThreshold: 1
+          periodSeconds: 10 
+        livenessProbe:
+          httpGet:
+            path: /health
+            port: 8080
+          failureThreshold: 1
+          periodSeconds: 10  
+          # tcpSocket:
+          #   port: 8080
+          # initialDelaySeconds: 5
+          # periodSeconds: 5
+---
+apiVersion: v1
+kind: Service 
+metadata:
+  name: user 
+  namespace: roboshop
+spec:
+  selector:
+    project: roboshop
+    environment: dev
+    component: user
+    purpose: user-deployment
+    tier: backend
+  ports:
+  - protocol: TCP 
+    port: 8080
+    targetPort: 8080

@@ -1,13 +1,13 @@
 apiVersion: apps/v1
 kind: Deployment
-metadata: 
-  name: mongodb
+metadata:
+  name: rabbitmq
   namespace: roboshop
   labels:
     project: roboshop
     environment: dev
-    component: mongodb
-    purpose: mongodb-deployment
+    component: rabbitmq
+    purpose: rabbitmq-deployment
     tier: db
 spec:
   replicas: 1
@@ -15,52 +15,53 @@ spec:
     matchLabels:
       project: roboshop
       environment: dev
-      component: mongodb
-      purpose: mongodb-deployment
+      component: rabbitmq
+      purpose: rabbitmq-deployment
       tier: db
   template:
     metadata:
       labels:
         project: roboshop
         environment: dev
-        component: mongodb
-        purpose: mongodb-deployment
+        component: rabbitmq
+        purpose: rabbitmq-deployment
         tier: db
     spec:
       containers:
-      - name: mongodb 
-        image: sivaphanikumar/mongodb:v1
+      - name: rabbitmq 
+        image: rabbitmq:3
+        env:
+        - name: RABBITMQ_DEFAULT_USER 
+          value: roboshop
+        - name: RABBITMQ_DEFAULT_PASS
+          value: roboshop123
         imagePullPolicy: Always
         # ports:
         # - containerPort:
         readinessProbe:
           tcpSocket:
-            port: 27017
-          initialDelaySeconds: 10
-          periodSeconds: 10
+            port: 5672
+          initialDelaySeconds: 15
+          periodSeconds: 15
         livenessProbe:
           tcpSocket:
-            port: 27017
-          initialDelaySeconds: 5
-          periodSeconds: 5
-
---- 
-# As catalogue need to connect to mondodb we know types of services
-# we are choosing ClusterIp service because we are not exposing to public 
-
+            port: 5672
+          initialDelaySeconds: 20
+          periodSeconds: 20
+---
 apiVersion: v1
 kind: Service 
 metadata:
-  name: mongodb 
+  name: rabbitmq 
   namespace: roboshop
 spec:
   selector:
     project: roboshop
     environment: dev
-    component: mongodb
-    purpose: mongodb-deployment
+    component: rabbitmq
+    purpose: rabbitmq-deployment
     tier: db
   ports:
   - protocol: TCP 
-    port: 27017
-    targetPort: 27017
+    port: 5672
+    targetPort: 5672
