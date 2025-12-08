@@ -34,8 +34,8 @@ data:
         include /etc/nginx/conf.d/*.conf;
 
         server {
-            listen       80;
-            listen       [::]:80;
+            listen       8080;
+            listen       [::]:8080;
             server_name  _;
             root         /usr/share/nginx/html;
 
@@ -66,6 +66,7 @@ data:
         }
     }
 ---
+# Here few places instead of 80 port i using 8080 because 80 is system port , while running and using 80 in kubernetes sometimes was not work
 apiVersion: apps/v1
 kind: Deployment
 metadata:
@@ -107,7 +108,7 @@ spec:
         # - configMapRef:
         #     name: catalogue 
         ports:
-        - containerPort: 80
+        - containerPort: 8080
         readinessProbe:
           # tcpSocket:
           #   port: 8080
@@ -115,13 +116,13 @@ spec:
           # periodSeconds: 10
           httpGet:
             path: /
-            port: 80
+            port: liveness-port
           failureThreshold: 1
           periodSeconds: 10 
         livenessProbe:
           httpGet:
             path: /
-            port: 80
+            port: liveness-port
           failureThreshold: 1
           periodSeconds: 10  
           # tcpSocket:
@@ -149,4 +150,4 @@ spec:
   ports:
   - protocol: TCP 
     port: 80
-    targetPort: 80
+    targetPort: 8080
