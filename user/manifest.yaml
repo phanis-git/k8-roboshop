@@ -45,7 +45,8 @@ spec:
         - configMapRef:
             name: user 
         ports:
-        - containerPort: 8080
+        - name: liveness-port
+          containerPort: 8080
         readinessProbe:
           # tcpSocket:
           #   port: 8080
@@ -53,13 +54,13 @@ spec:
           # periodSeconds: 10
           httpGet:
             path: /health
-            port: 8080
+            port: liveness-port
           failureThreshold: 1
           periodSeconds: 10 
         livenessProbe:
           httpGet:
             path: /health
-            port: 8080
+            port: liveness-port
           failureThreshold: 1
           periodSeconds: 10  
           # tcpSocket:
